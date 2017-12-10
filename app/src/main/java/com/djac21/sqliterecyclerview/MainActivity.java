@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
         databaseAdapter = new DatabaseAdapter(this);
 
-        RecyclerView recyclerView = findViewById(R.id.vpnRecyclerView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
         adapter = new RecyclerViewAdapter(this, getData());
         adapter.setClickListener(this);
         adapter.setLongClickListener(this);
@@ -64,16 +64,17 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     }
 
     public List<DataModel> getData() {
+        data.clear();
         databaseAdapter.getAllData(data);
         return data;
     }
 
     public void landingScreen() {
         if (data.isEmpty()) {
-            findViewById(R.id.vpnRecyclerView).setVisibility(View.GONE);
+            findViewById(R.id.recyclerView).setVisibility(View.GONE);
             findViewById(R.id.landingScreen).setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.vpnRecyclerView).setVisibility(View.VISIBLE);
+            findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
             findViewById(R.id.landingScreen).setVisibility(View.GONE);
         }
     }
@@ -92,6 +93,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        String itemName = data.get(position).getTitle();
+                        databaseAdapter.deleteRow(itemName);
+
                         data.remove(position);
                         adapter.notifyItemRemoved(position);
                         adapter.notifyItemRangeChanged(position, data.size());
@@ -113,13 +117,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         titleEditText.setHint("Title");
 
         final EditText dataEditText = new EditText(MainActivity.this);
+        dataEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         dataEditText.setHint("Data");
 
         linearLayout.addView(titleEditText);
         linearLayout.addView(dataEditText);
         linearLayout.setPadding(50, 50, 50, 50);
 
-        AlertDialog.Builder addNewData = new AlertDialog.Builder(MainActivity.this)
+        AlertDialog.Builder addNewDataDialog = new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Add New Data")
                 .setView(linearLayout)
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
@@ -137,13 +142,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                             data.add(items);
                             adapter.notifyDataSetChanged();
 
-                            long id = databaseAdapter.insertData(addTitle, addText);
-                            if (id < 0)
+                            long insertedData = databaseAdapter.insertData(addTitle, addText);
+                            if (insertedData < 0)
                                 Toast.makeText(MainActivity.this, "Unsuccessful", Toast.LENGTH_SHORT).show();
                             else
                                 Toast.makeText(MainActivity.this, "Successful Added", Toast.LENGTH_SHORT).show();
 
                             InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            assert inputManager != null;
                             inputManager.hideSoftInputFromWindow(linearLayout.getWindowToken(), 0);
 
                             landingScreen();
@@ -151,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                     }
                 })
                 .setNegativeButton("Cancel", null);
-        addNewData.create().show();
+        addNewDataDialog.create().show();
     }
 
     @Override

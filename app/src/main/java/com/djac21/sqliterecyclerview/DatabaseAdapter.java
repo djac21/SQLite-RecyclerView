@@ -27,7 +27,7 @@ class DatabaseAdapter {
         return id;
     }
 
-    String getAllData(List data) {
+    void getAllData(List data) {
         SQLiteDatabase db = helper.getWritableDatabase();
         String[] columns = {DbHelper.UID, DbHelper.TITLE, DbHelper.TEXT};
         Cursor cursor = db.query(DbHelper.TABLE_NAME, columns, null, null, null, null, null);
@@ -35,11 +35,10 @@ class DatabaseAdapter {
             int index1 = cursor.getColumnIndex(DbHelper.TITLE);
             int index2 = cursor.getColumnIndex(DbHelper.TEXT);
             String title = cursor.getString(index1);
-            String address = cursor.getString(index2);
-            DataModel dataModel = new DataModel(title, address);
+            String text = cursor.getString(index2);
+            DataModel dataModel = new DataModel(title, text);
             data.add(dataModel);
         }
-        return "";
     }
 
     public String getData(String title) {
@@ -50,7 +49,7 @@ class DatabaseAdapter {
         while (cursor.moveToNext()) {
             int index1 = cursor.getColumnIndex(DbHelper.TITLE);
             int index2 = cursor.getColumnIndex(DbHelper.TEXT);
-            String personName = cursor.getString(index1);
+            String name = cursor.getString(index1);
             String password = cursor.getString(index2);
             buffer.append(title + " " + password + "\n");
         }
@@ -68,16 +67,16 @@ class DatabaseAdapter {
 
     public boolean deleteRow(String title) {
         SQLiteDatabase db = helper.getWritableDatabase();
-        return db.delete(DbHelper.TABLE_NAME, DbHelper.TITLE + "=" + title, null) > 0;
+        return db.delete(DbHelper.TABLE_NAME, DbHelper.TITLE + "='" + title +"' ;", null) > 0;
     }
 
     private static class DbHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "djdatabase";
         private static final String TABLE_NAME = "DJTABLE";
-        private static final int DATABASE_VERSION = 3;
+        private static final int DATABASE_VERSION = 1;
         private static final String UID = "_id";
         private static final String TITLE = "title";
-        private static final String TEXT = "Password";
+        private static final String TEXT = "text";
         private static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME
                 + "(" + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TITLE
                 + " VARCHAR(255)," + TEXT + " VARCHAR(255));";
