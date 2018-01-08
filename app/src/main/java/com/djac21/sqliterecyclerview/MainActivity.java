@@ -2,20 +2,13 @@ package com.djac21.sqliterecyclerview;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.text.format.Formatter;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,13 +16,11 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.ClickListener, RecyclerViewAdapter.LongClickListener {
@@ -82,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     @Override
     public void itemClicked(View view, int position) {
         String item = data.get(position).getText();
-        Toast.makeText(this, "Data: " + item , Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Data: " + item, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -93,8 +84,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String itemName = data.get(position).getTitle();
-                        databaseAdapter.deleteRow(itemName);
+                        String timeStamp = data.get(position).getDate();
+                        databaseAdapter.deleteRow(timeStamp);
 
                         data.remove(position);
                         adapter.notifyItemRemoved(position);
@@ -132,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                     public void onClick(DialogInterface dialog, int which) {
                         String addTitle = titleEditText.getText().toString();
                         String addText = dataEditText.getText().toString();
+                        String timeStamp = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
+
 
                         if (addTitle.isEmpty() || addText.isEmpty())
                             Toast.makeText(MainActivity.this, "Please be sure all fields are filled", Toast.LENGTH_SHORT).show();
@@ -139,10 +132,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                             DataModel items = new DataModel();
                             items.setTitle(addTitle);
                             items.setText(addText);
+                            items.setDate(timeStamp);
                             data.add(items);
                             adapter.notifyDataSetChanged();
 
-                            long insertedData = databaseAdapter.insertData(addTitle, addText);
+                            long insertedData = databaseAdapter.insertData(addTitle, addText, timeStamp);
                             if (insertedData < 0)
                                 Toast.makeText(MainActivity.this, "Unsuccessful", Toast.LENGTH_SHORT).show();
                             else

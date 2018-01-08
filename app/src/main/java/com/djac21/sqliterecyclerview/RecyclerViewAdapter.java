@@ -20,7 +20,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         inflater = LayoutInflater.from(context);
         this.data = data;
     }
-    
+
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.card_view, parent, false);
@@ -32,6 +32,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         DataModel current = data.get(position);
         holder.title.setText(current.getTitle());
         holder.text.setText(current.getText());
+        holder.timeStamp.setText(current.getDate());
     }
 
     public void setClickListener(ClickListener clickListener) {
@@ -48,12 +49,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        TextView title, text;
+        TextView title, text, timeStamp;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.title);
             text = itemView.findViewById(R.id.text);
+            timeStamp = itemView.findViewById(R.id.timeStamp);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
@@ -62,19 +64,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         @Override
         public void onClick(View v) {
             if (clickListener != null) {
-               clickListener.itemClicked(v, getAdapterPosition());
+                clickListener.itemClicked(v, getAdapterPosition());
             }
         }
 
         @Override
-        public boolean onLongClick(View v){
+        public boolean onLongClick(View v) {
             if (longClickListener != null) {
                 longClickListener.itemLongClicked(v, getAdapterPosition());
             }
             return true;
         }
     }
-    
+
     public interface ClickListener {
         void itemClicked(View view, int position);
     }
