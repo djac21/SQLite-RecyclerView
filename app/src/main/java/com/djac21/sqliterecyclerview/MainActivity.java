@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     @Override
     public void itemLongClicked(View view, final int position) {
         AlertDialog.Builder deleteDialog = new AlertDialog.Builder(this)
-                .setTitle("Delete Server?")
-                .setMessage("Are you sure you like to delete the following server?")
+                .setTitle("Delete Item?")
+                .setMessage("Are you sure you like to delete the following item?")
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
