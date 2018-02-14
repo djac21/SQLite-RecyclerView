@@ -3,4 +3,5 @@
     <string name="title">Title</string>
     <string name="text">Text</string>
     <string name="you_have_no_data">You have no data</string>
+    <string name="timestamp">Timestamp</string>
 </resources>
