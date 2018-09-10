@@ -5,20 +5,23 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.TextView;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
     private LayoutInflater inflater;
     private List<DataModel> data;
+    private List<DataModel> filteredData;
     private ClickListener clickListener;
     private LongClickListener longClickListener;
 
     public RecyclerViewAdapter(Context context, List<DataModel> data) {
         inflater = LayoutInflater.from(context);
         this.data = data;
+        this.filteredData = data;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        DataModel current = data.get(position);
+        DataModel current = filteredData.get(position);
         holder.title.setText(current.getTitle());
         holder.text.setText(current.getText());
         holder.timeStamp.setText(current.getDate());
@@ -45,7 +48,36 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return filteredData.size();
+    }
+
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    filteredData = data;
+                } else {
+                    List<DataModel> filteredList = new ArrayList<>();
+                    for (DataModel model : data)
+                        if (model.getTitle().toLowerCase().contains(charString.toLowerCase()))
+                            filteredList.add(model);
+
+                    filteredData = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = filteredData;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                filteredData = (ArrayList<DataModel>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {

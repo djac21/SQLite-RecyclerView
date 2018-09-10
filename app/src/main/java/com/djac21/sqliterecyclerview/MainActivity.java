@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.ClickListener, RecyclerViewAdapter.LongClickListener {
+public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.ClickListener, RecyclerViewAdapter.LongClickListener, SearchView.OnQueryTextListener {
 
     public static List<DataModel> data = new ArrayList<>();
     RecyclerViewAdapter adapter;
@@ -125,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                         String addText = dataEditText.getText().toString();
                         String timeStamp = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
 
-
                         if (addTitle.isEmpty() || addText.isEmpty())
                             Toast.makeText(MainActivity.this, "Please be sure all fields are filled", Toast.LENGTH_SHORT).show();
                         else {
@@ -158,6 +158,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
+
+        final MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(MainActivity.this);
+
         return true;
     }
 
@@ -167,5 +172,16 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             addData();
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+        adapter.getFilter().filter(query);
+        return false;
     }
 }

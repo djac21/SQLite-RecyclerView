@@ -4,4 +4,6 @@
     <string name="text">Text</string>
     <string name="you_have_no_data">You have no data</string>
     <string name="timestamp">Timestamp</string>
+    <string name="search">Search</string>
+    <string name="add_data">Add Data</string>
 </resources>

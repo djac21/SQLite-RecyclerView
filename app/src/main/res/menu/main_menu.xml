@@ -5,9 +5,15 @@
     tools:context=".MainActivity">
 
     <item
-        android:title="Add Data"
+        android:title="@string/add_data"
         android:id="@+id/data"
         android:orderInCategory="100"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/search"
+        android:title="@string/search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom" />
 
 </menu>
